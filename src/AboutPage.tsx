@@ -1,4 +1,6 @@
 // דף אודות
+import profilePhoto from './assets/תמונה ולריה.jpg';
+
 function AboutPage() {
   return (
     <div className="about-page">
@@ -25,14 +27,10 @@ function AboutPage() {
         <h3>Developer Information</h3>
         <div className="developer-info">
           <div className="developer-photo">
-            {/* תמונה - יש להחליף בתמונה אמיתית */}
-            <div className="photo-placeholder">
-              👤
-            </div>
+            <img src={profilePhoto} alt="Valeria Rusakova" className="profile-image" />
           </div>
           <div className="developer-details">
-            <p><strong>Name:</strong> [Your Name]</p>
-            <p><strong>Email:</strong> [Your Email]</p>
+            <p><strong>Name:</strong> Valeria Rusakova</p>
             <p><strong>Course:</strong> Full Stack Web Developer</p>
           </div>
         </div>
