@@ -48,7 +48,7 @@ function CoinCard({ coin, onMaxCoinsReached }: CoinCardProps) {
       <button className="more-info-btn" onClick={() => setShowMoreInfo(!showMoreInfo)}>
         {showMoreInfo ? 'CLOSE INFO' : 'MORE INFO'}
       </button>
-      <MoreInfo coinId={coin.id} isOpen={showMoreInfo} onClose={() => setShowMoreInfo(false)} />
+      <MoreInfo coinId={coin.id} coinSymbol={coin.symbol} isOpen={showMoreInfo} onClose={() => setShowMoreInfo(false)} />
     </div>
   );
 }

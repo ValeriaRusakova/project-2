@@ -11,11 +11,16 @@ interface Prices {
 // Props
 interface MoreInfoProps {
   coinId: string;
+  coinSymbol: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function MoreInfo({ coinId, isOpen, onClose }: MoreInfoProps) {
+// Cache למחירים - מונע קריאות מיותרות
+const pricesCache: { [key: string]: { prices: Prices; timestamp: number } } = {};
+const CACHE_DURATION = 60000; // 60 שניות
+
+function MoreInfo({ coinId, coinSymbol, isOpen, onClose }: MoreInfoProps) {
   // State למחירים
   const [prices, setPrices] = useState<Prices | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,21 +28,32 @@ function MoreInfo({ coinId, isOpen, onClose }: MoreInfoProps) {
 
   // טעינת מחירים מה-API
   useEffect(() => {
-    if (isOpen && coinId) {
+    if (isOpen && coinSymbol) {
+      // בדיקה אם יש ב-cache
+      const cached = pricesCache[coinSymbol];
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+        setPrices(cached.prices);
+        return;
+      }
+
       setLoading(true);
       setError('');
       
-      fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
+      // שימוש ב-CryptoCompare API במקום CoinGecko (אין rate limiting)
+      fetch(`https://min-api.cryptocompare.com/data/price?fsym=${coinSymbol.toUpperCase()}&tsyms=USD,EUR,ILS`)
         .then((response) => {
           if (!response.ok) throw new Error('Failed to fetch');
           return response.json();
         })
         .then((data) => {
-          setPrices({
-            usd: data.market_data.current_price.usd,
-            eur: data.market_data.current_price.eur,
-            ils: data.market_data.current_price.ils,
-          });
+          const newPrices = {
+            usd: data.USD || 0,
+            eur: data.EUR || 0,
+            ils: data.ILS || 0,
+          };
+          setPrices(newPrices);
+          // שמירה ב-cache
+          pricesCache[coinSymbol] = { prices: newPrices, timestamp: Date.now() };
           setLoading(false);
         })
         .catch(() => {
@@ -45,7 +61,7 @@ function MoreInfo({ coinId, isOpen, onClose }: MoreInfoProps) {
           setLoading(false);
         });
     }
-  }, [coinId, isOpen]);
+  }, [coinSymbol, isOpen]);
 
   // אם לא פתוח - לא מציגים
   if (!isOpen) return null;
@@ -58,14 +74,14 @@ function MoreInfo({ coinId, isOpen, onClose }: MoreInfoProps) {
       
       {prices && (
         <div className="prices">
-          <p>$ {prices.usd.toLocaleString()}</p>
-          <p>€ {prices.eur.toLocaleString()}</p>
-          <p>₪ {prices.ils.toLocaleString()}</p>
+          <p>💵 USD: ${prices.usd.toLocaleString()}</p>
+          <p>💶 EUR: €{prices.eur.toLocaleString()}</p>
+          <p>💰 ILS: ₪{prices.ils.toLocaleString()}</p>
         </div>
       )}
       
       <button onClick={onClose} className="close-info-btn">
-        CLOSE INFO
+        Close
       </button>
     </div>
   );
