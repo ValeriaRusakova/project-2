@@ -1,6 +1,6 @@
 // קובץ ראשי - App.tsx
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 
 // קומפוננטות
@@ -18,7 +18,7 @@ function App() {
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="app">
         {/* תפריט ניווט */}
         <Navbar 
@@ -39,7 +39,7 @@ function App() {
           </Routes>
         </main>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
