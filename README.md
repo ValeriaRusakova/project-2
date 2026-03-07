@@ -1,76 +1,66 @@
 
+# Cryptonite - Cryptocurrency Tracking App
 
+אפליקציה למעקב אחר מטבעות וירטואליים בזמן אמת.
 
-# React + TypeScript + Vite
+## תיאור הפרויקט
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Cryptonite היא אפליקציית React לניהול ומעקב אחר מטבעות קריפטוגרפיים. האפליקציה מאפשרת צפייה ב-100 המטבעות המובילים, בחירת מטבעות למעקב, צפייה בגרפים בזמן אמת וקבלת המלצות AI להשקעה.
 
-Currently, two official plugins are available:
+## תכונות עיקריות
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **דף הבית**: הצגת 100 מטבעות עם חיפוש, מחירים ב-3 מטבעות (USD, EUR, ILS)
+- **בחירת מטבעות**: אפשרות לבחור עד 5 מטבעות למעקב באמצעות Switch
+- **דו"ח זמן אמת**: גרף נרות (Candlestick) המתעדכן כל שנייה
+- **המלצות AI**: ניתוח מטבע והמלצה לקנייה/מכירה עם נתונים מפורטים
+- **דף אודות**: מידע על הפרויקט והמפתחת
 
-## React Compiler
+## טכנולוגיות
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** + **TypeScript**
+- **Redux Toolkit** - ניהול state
+- **React Router** - ניווט בין דפים
+- **Recharts** - גרפים ותרשימים
+- **Vite** - build tool
 
-## Expanding the ESLint configuration
+## APIs
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **CoinGecko API** - רשימת מטבעות ונתונים מפורטים
+- **CryptoCompare API** - מחירים בזמן אמת
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## התקנה והרצה
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# התקנת dependencies
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# הרצה בסביבת פיתוח
+npm run dev
+
+# בנייה לייצור
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## מבנה הפרויקט
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── App.tsx          # קומפוננטה ראשית + routing
+├── store.ts         # Redux store
+├── Navbar.tsx       # תפריט ניווט
+├── Header.tsx       # כותרת עם Parallax
+├── CoinCard.tsx     # כרטיס מטבע
+├── CoinList.tsx     # רשימת מטבעות
+├── MoreInfo.tsx     # מידע נוסף (מחירים)
+├── Dialog.tsx       # דיאלוג החלפת מטבע
+├── HomePage.tsx     # דף הבית
+├── ReportsPage.tsx  # דף דוחות
+├── RecommendationsPage.tsx  # דף המלצות
+├── AboutPage.tsx    # דף אודות
+└── App.css          # עיצוב
+```
+
+## מפתחת
+
+**Valeria Rusakova**  
+Full Stack Web Developer Course
