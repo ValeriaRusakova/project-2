@@ -2,7 +2,7 @@
    Cryptonite - עיצוב האפליקציה
    =========================================== */
 
-/* ========== משתנים גלובליים ========== */
+/* ========== משתנים גלובליים - Light Mode ========== */
 :root {
   --primary-color: #2196F3;
   --primary-dark: #1976D2;
@@ -14,6 +14,24 @@
   --border-color: #B0BEC5;
   --success-color: #27ae60;
   --error-color: #e74c3c;
+  --navbar-bg: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ========== משתנים גלובליים - Dark Mode ========== */
+[data-theme="dark"] {
+  --primary-color: #64B5F6;
+  --primary-dark: #42A5F5;
+  --secondary-color: #90CAF9;
+  --background-color: #1a1a2e;
+  --card-background: #16213e;
+  --text-color: #e8e8e8;
+  --text-light: #a0a0a0;
+  --border-color: #3a3a5c;
+  --success-color: #4ade80;
+  --error-color: #f87171;
+  --navbar-bg: #16213e;
+  --shadow-color: rgba(0, 0, 0, 0.3);
 }
 
 /* ========== איפוס ובסיס ========== */
@@ -36,11 +54,31 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: var(--card-background);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--navbar-bg);
+  box-shadow: 0 2px 4px var(--shadow-color);
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+/* כפתור מעבר בין מודים */
+.theme-toggle {
+  background: none;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  background-color: var(--primary-color);
+  transform: scale(1.1);
 }
 
 .navbar-links {
@@ -63,7 +101,9 @@ body {
 }
 
 .navbar-search {
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .search-input {

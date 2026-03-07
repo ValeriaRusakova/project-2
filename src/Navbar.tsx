@@ -1,5 +1,6 @@
 // קומפוננטת Navbar - תפריט ניווט ראשי
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 // Props - מקבלת את ערך החיפוש ופונקציה לעדכון
 interface NavbarProps {
@@ -8,6 +9,22 @@ interface NavbarProps {
 }
 
 function Navbar({ searchValue, onSearchChange }: NavbarProps) {
+  // State למוד כהה/בהיר
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved === 'true';
+  });
+
+  // עדכון ה-theme בעת שינוי
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem('darkMode', String(darkMode));
+  }, [darkMode]);
+
   return (
     <nav className="navbar">
       {/* לינקים לדפים */}
@@ -18,7 +35,7 @@ function Navbar({ searchValue, onSearchChange }: NavbarProps) {
         <Link to="/about" className="nav-link">About</Link>
       </div>
       
-      {/* תיבת חיפוש */}
+      {/* תיבת חיפוש וכפתור מוד */}
       <div className="navbar-search">
         <input
           type="text"
@@ -27,6 +44,9 @@ function Navbar({ searchValue, onSearchChange }: NavbarProps) {
           onChange={(e) => onSearchChange(e.target.value)}
           className="search-input"
         />
+        <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? '☀️' : '🌙'}
+        </button>
       </div>
     </nav>
   );
