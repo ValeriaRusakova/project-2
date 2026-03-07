@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { coinsCache } from './HomePage';
 
+// Cache להמלצות - מונע קריאות מיותרות
+const recommendationCache: { [key: string]: { data: any; timestamp: number } } = {};
+const CACHE_DURATION = 300000; // 5 דקות
+
 function RecommendationsPage() {
   const selectedCoins = useSelector((state: any) => state.coins.selectedCoins);
   const [coins, setCoins] = useState<any[]>([]);
@@ -27,52 +31,67 @@ function RecommendationsPage() {
     if (!selectedCoin) return;
     setLoading(true);
     setRecommendation('');
+    
+    // בדיקה אם יש ב-cache
+    const cached = recommendationCache[selectedCoin];
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      setRecommendation(cached.data);
+      setLoading(false);
+      return;
+    }
+    
     try {
-      const res = await fetch(`https://api.coingecko.com/api/v3/coins/${selectedCoin}?localization=false&tickers=false&community_data=false&developer_data=false`);
-      if (res.status === 429) {
-        setRecommendation('API rate limited. Please wait a minute.');
+      // שימוש בנתונים מה-cache של דף הבית (כבר יש לנו את רוב המידע)
+      const coinData = coinsCache?.find((c: any) => c.id === selectedCoin);
+      if (!coinData) {
+        setRecommendation('Coin data not found');
         setLoading(false);
         return;
       }
-      const data = await res.json();
+
+      // קבלת מחיר עדכני מ-CryptoCompare (ללא rate limiting)
+      const symbol = coinData.symbol.toUpperCase();
+      const priceRes = await fetch(`https://min-api.cryptocompare.com/data/price?fsym=${symbol}&tsyms=USD`);
+      const priceData = await priceRes.json();
+      
       const info = {
-        name: data.name,
-        price: data.market_data.current_price.usd,
-        cap: data.market_data.market_cap.usd,
-        vol24h: data.market_data.total_volume.usd,
-        c30: data.market_data.price_change_percentage_30d_in_currency?.usd || 0,
-        c60: data.market_data.price_change_percentage_60d_in_currency?.usd || 0,
-        c200: data.market_data.price_change_percentage_200d_in_currency?.usd || 0,
+        name: coinData.name,
+        price: priceData.USD || coinData.current_price,
+        cap: coinData.market_cap,
+        vol24h: coinData.total_volume,
+        c24h: coinData.price_change_percentage_24h || 0,
       };
       
-      // קביעת ההמלצה והסבר
+      // קביעת ההמלצה והסבר בהתבסס על נתונים זמינים
       let rec = '';
       let explanation = '';
       
-      if (info.c30 > 0 && info.c200 > 0) {
+      if (info.c24h > 2) {
         rec = '✅ Recommended to BUY';
-        explanation = `${info.name} מראה מומנטום חיובי עם עלייה של ${info.c30.toFixed(2)}% ב-30 הימים האחרונים ועלייה של ${info.c200.toFixed(2)}% ב-200 ימים. נפח המסחר היומי הגבוה של $${info.vol24h.toLocaleString()} מצביע על עניין משמעותי בשוק. זה יכול להיות זמן טוב לרכישה, אך תמיד יש לבצע מחקר נוסף.`;
-      } else if (info.c30 < -10 || info.c200 < -20) {
+        explanation = `${info.name} מראה מומנטום חיובי עם עלייה של ${info.c24h.toFixed(2)}% ב-24 השעות האחרונות. נפח המסחר היומי של $${info.vol24h.toLocaleString()} מצביע על עניין משמעותי בשוק. זה יכול להיות זמן טוב לרכישה, אך תמיד יש לבצע מחקר נוסף.`;
+      } else if (info.c24h < -5) {
         rec = '❌ NOT Recommended to buy';
-        explanation = `${info.name} מראה ירידה משמעותית עם שינוי של ${info.c30.toFixed(2)}% ב-30 ימים ו-${info.c200.toFixed(2)}% ב-200 ימים. למרות נפח מסחר של $${info.vol24h.toLocaleString()}, מומלץ להמתין להתייצבות המחיר לפני רכישה. שקול לחכות לאיתותים חיוביים יותר.`;
+        explanation = `${info.name} מראה ירידה משמעותית עם שינוי של ${info.c24h.toFixed(2)}% ב-24 שעות. למרות נפח מסחר של $${info.vol24h.toLocaleString()}, מומלץ להמתין להתייצבות המחיר לפני רכישה. שקול לחכות לאיתותים חיוביים יותר.`;
       } else {
         rec = '⚠️ HOLD - Wait for better entry';
-        explanation = `${info.name} מראה אותות מעורבים. המחיר הנוכחי הוא $${info.price.toLocaleString()} עם שינוי של ${info.c30.toFixed(2)}% ב-30 ימים. נפח המסחר היומי הוא $${info.vol24h.toLocaleString()}. מומלץ להמתין לכיוון ברור יותר בשוק לפני קבלת החלטה.`;
+        explanation = `${info.name} מראה אותות מעורבים. המחיר הנוכחי הוא $${info.price.toLocaleString()} עם שינוי של ${info.c24h.toFixed(2)}% ב-24 שעות. נפח המסחר היומי הוא $${info.vol24h.toLocaleString()}. מומלץ להמתין לכיוון ברור יותר בשוק לפני קבלת החלטה.`;
       }
       
-      setRecommendation(`${rec}
+      const result = `${rec}
 
 📊 Analysis for ${info.name}:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 💰 Current Price: $${info.price.toLocaleString()}
 📈 Market Cap: $${info.cap.toLocaleString()}
 💹 24h Volume: $${info.vol24h.toLocaleString()}
-📅 30-day Change: ${info.c30.toFixed(2)}%
-📅 60-day Change: ${info.c60.toFixed(2)}%
-📅 200-day Change: ${info.c200.toFixed(2)}%
+📅 24h Change: ${info.c24h.toFixed(2)}%
 
 📝 Explanation:
-${explanation}`);
+${explanation}`;
+
+      // שמירה ב-cache
+      recommendationCache[selectedCoin] = { data: result, timestamp: Date.now() };
+      setRecommendation(result);
     } catch { setRecommendation('Failed to get recommendation'); }
     setLoading(false);
   };

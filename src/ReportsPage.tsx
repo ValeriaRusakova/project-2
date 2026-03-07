@@ -20,7 +20,6 @@ function ReportsPage() {
       return;
     }
 
-    // שימוש ב-cache במקום קריאה חדשה
     if (coinsCache) {
       const syms: string[] = [];
       coinsCache.forEach((coin: any) => {
@@ -50,7 +49,6 @@ function ReportsPage() {
           const currentPrice = data[s]?.USD || 0;
           const prevPrice = prevPrices.current[s] || currentPrice;
           
-          // יצירת נר עם וריאציה קטנה
           const variation = currentPrice * 0.0003;
           const open = prevPrice;
           const close = currentPrice + (Math.random() - 0.5) * variation;
@@ -80,7 +78,7 @@ function ReportsPage() {
   useEffect(() => {
     if (symbols.length > 0) {
       fetchPrices();
-      intervalRef.current = window.setInterval(fetchPrices, 1000);
+      intervalRef.current = window.setInterval(fetchPrices, 1000); // כל שנייה
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [symbols]);
@@ -102,7 +100,6 @@ function ReportsPage() {
     <div className="reports-page">
       <h2>דו"ח זמן אמת</h2>
       
-      {/* בחירת מטבע */}
       <div className="symbol-tabs">
         {symbols.map((s) => (
           <button
@@ -115,7 +112,6 @@ function ReportsPage() {
         ))}
       </div>
 
-      {/* גרף נרות */}
       <div className="chart-container candlestick-chart">
         <h3 className="chart-title">{selectedSymbol}</h3>
         <ResponsiveContainer width="100%" height={400}>
@@ -140,7 +136,6 @@ function ReportsPage() {
                 return null;
               }}
             />
-            {/* נרות - גוף */}
             <Bar dataKey="body" barSize={8}>
               {currentData.map((entry: any, index: number) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
