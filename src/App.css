@@ -602,6 +602,16 @@ input:checked + .slider:before {
   margin: 8px 0;
 }
 
+/* ========== Pie Chart ========== */
+.pie-chart-container {
+  margin-top: 30px;
+  border-left: 4px solid #4CAF50;
+}
+
+.pie-chart-container .chart-title {
+  color: #4CAF50;
+}
+
 /* ========== Loading & Error ========== */
 .loading {
   text-align: center;
@@ -617,32 +627,140 @@ input:checked + .slider:before {
   color: var(--error-color);
 }
 
-/* ========== Responsive Design ========== */
+/* ========== Responsive Design - Mobile ========== */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
+    padding: 10px 15px;
   }
   
   .navbar-links {
     flex-wrap: wrap;
     justify-content: center;
+    gap: 8px;
+  }
+  
+  .nav-link {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .navbar-search {
+    width: 100%;
+    flex-direction: row;
   }
   
   .search-input {
     width: 100%;
+    flex: 1;
+  }
+  
+  .header {
+    height: 200px;
   }
   
   .header-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
+  }
+  
+  .main-content {
+    padding: 15px;
   }
   
   .coin-list {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
   
+  .coin-card {
+    padding: 15px;
+  }
+  
+  .coin-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .coin-symbol {
+    font-size: 1.2rem;
+  }
+  
+  /* Reports Page Mobile */
+  .reports-page h2 {
+    font-size: 1.5rem;
+  }
+  
+  .symbol-tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .symbol-tab {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+  
+  .chart-container {
+    padding: 15px;
+    margin-top: 15px;
+  }
+  
+  .chart-title {
+    font-size: 1.2rem;
+  }
+  
+  /* Recommendations Mobile */
+  .recommendations-page h2 {
+    font-size: 1.5rem;
+  }
+  
+  .recommendation-result pre {
+    font-size: 13px;
+  }
+  
+  /* About Mobile */
   .developer-info {
     flex-direction: column;
     text-align: center;
+  }
+  
+  .about-section {
+    padding: 15px;
+  }
+  
+  /* Dialog Mobile */
+  .dialog {
+    width: 95%;
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
+
+/* ========== Extra Small Screens ========== */
+@media (max-width: 480px) {
+  .header-title {
+    font-size: 1.5rem;
+  }
+  
+  .navbar-links {
+    gap: 5px;
+  }
+  
+  .nav-link {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  
+  .theme-toggle {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .coin-card-header {
+    flex-direction: column;
+    gap: 10px;
   }
 }

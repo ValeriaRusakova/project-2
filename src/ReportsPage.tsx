@@ -1,8 +1,10 @@
-// דף דוחות - גרף זמן אמת בסגנון נרות
+// דף דוחות - גרף זמן אמת בסגנון נרות + גרף עוגה
 import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { coinsCache } from './HomePage';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
+
+const PIE_COLORS = ['#2196F3', '#4CAF50', '#FF9800', '#E91E63', '#9C27B0'];
 
 function ReportsPage() {
   const selectedCoins = useSelector((state: any) => state.coins.selectedCoins);
@@ -10,6 +12,7 @@ function ReportsPage() {
   const [symbols, setSymbols] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSymbol, setSelectedSymbol] = useState<string>('');
+  const [marketCapData, setMarketCapData] = useState<any[]>([]);
   const intervalRef = useRef<number | null>(null);
   const prevPrices = useRef<any>({});
   const counterRef = useRef(0);
@@ -22,12 +25,21 @@ function ReportsPage() {
 
     if (coinsCache) {
       const syms: string[] = [];
+      const capData: any[] = [];
+      
       coinsCache.forEach((coin: any) => {
         if (selectedCoins.includes(coin.id)) {
           syms.push(coin.symbol.toUpperCase());
+          capData.push({
+            name: coin.symbol.toUpperCase(),
+            value: coin.market_cap,
+            fullName: coin.name
+          });
         }
       });
+      
       setSymbols(syms);
+      setMarketCapData(capData);
       if (syms.length > 0) setSelectedSymbol(syms[0]);
       setLoading(false);
     } else {
@@ -78,7 +90,7 @@ function ReportsPage() {
   useEffect(() => {
     if (symbols.length > 0) {
       fetchPrices();
-      intervalRef.current = window.setInterval(fetchPrices, 1000); // כל שנייה
+      intervalRef.current = window.setInterval(fetchPrices, 1000);
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [symbols]);
@@ -112,9 +124,10 @@ function ReportsPage() {
         ))}
       </div>
 
+      {/* גרף נרות */}
       <div className="chart-container candlestick-chart">
         <h3 className="chart-title">{selectedSymbol}</h3>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={350}>
           <ComposedChart data={currentData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
             <XAxis dataKey="time" tick={{ fontSize: 10 }} interval={2} />
@@ -142,6 +155,34 @@ function ReportsPage() {
               ))}
             </Bar>
           </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* גרף עוגה - Market Cap */}
+      <div className="chart-container pie-chart-container">
+        <h3 className="chart-title">📊 Market Cap Distribution</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={marketCapData}
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              innerRadius={40}
+              dataKey="value"
+              nameKey="name"
+              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(1)}%`}
+            >
+              {marketCapData.map((_, index) => (
+                <Cell key={`pie-cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip 
+              formatter={(value: number) => `$${value.toLocaleString()}`}
+              labelFormatter={(label) => marketCapData.find(d => d.name === label)?.fullName || label}
+            />
+            <Legend />
+          </PieChart>
         </ResponsiveContainer>
       </div>
     </div>
