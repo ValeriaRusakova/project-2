@@ -1,4 +1,5 @@
-
+קישור לאתר - https://valeriarusakova.github.io/project-2/#/
+קישור GitHub - https://github.com/ValeriaRusakova/project-2 
 # Cryptonite - Cryptocurrency Tracking App
 
 אפליקציה למעקב אחר מטבעות וירטואליים בזמן אמת.

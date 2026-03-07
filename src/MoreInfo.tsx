@@ -10,7 +10,6 @@ interface Prices {
 
 // Props
 interface MoreInfoProps {
-  coinId: string;
   coinSymbol: string;
   isOpen: boolean;
   onClose: () => void;
@@ -20,7 +19,7 @@ interface MoreInfoProps {
 const pricesCache: { [key: string]: { prices: Prices; timestamp: number } } = {};
 const CACHE_DURATION = 60000; // 60 שניות
 
-function MoreInfo({ coinId, coinSymbol, isOpen, onClose }: MoreInfoProps) {
+function MoreInfo({ coinSymbol, isOpen, onClose }: MoreInfoProps) {
   // State למחירים
   const [prices, setPrices] = useState<Prices | null>(null);
   const [loading, setLoading] = useState(false);
