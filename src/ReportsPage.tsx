@@ -171,15 +171,15 @@ function ReportsPage() {
               innerRadius={40}
               dataKey="value"
               nameKey="name"
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(1)}%`}
+              label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(1)}%`}
             >
               {marketCapData.map((_, index) => (
                 <Cell key={`pie-cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
               ))}
             </Pie>
             <Tooltip 
-              formatter={(value: number) => `$${value.toLocaleString()}`}
-              labelFormatter={(label) => marketCapData.find(d => d.name === label)?.fullName || label}
+              formatter={(value: any) => `$${Number(value).toLocaleString()}`}
+              labelFormatter={(label: any) => marketCapData.find(d => d.name === label)?.fullName || label}
             />
             <Legend />
           </PieChart>
